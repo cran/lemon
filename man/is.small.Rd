@@ -28,4 +28,3 @@ Units based on arithmetic, such as sum of multiple units,
 are also \emph{not} small.
 \code{NA}s are returned for undecided sizes.
 }
-

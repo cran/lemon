@@ -51,6 +51,12 @@ d2 <- d + aes(shape=cut) +
         legend.background = element_blank())
 reposition_legend(d2, 'left')
 
+## ----fig.cap='Legend is drawn *under* axis lines.'-----------------------
+reposition_legend(d + theme_classic(), 'top left')
+
+## ----fig.cap='Legend has to be nudged to not overpaint panel border.'----
+reposition_legend(d + theme_bw(), 'top left', x=0.002, y=1-0.002)
+
 ## ------------------------------------------------------------------------
 g1 <- function(a.gplot){
   if (!gtable::is.gtable(a.gplot))
@@ -128,6 +134,13 @@ grid.arrange(p1+theme(legend.position='hidden'), p2+theme(legend.position='hidde
 grid.arrange(p1+theme(legend.position='hidden'), p2+theme(legend.position='hidden'),
              p3+theme(legend.position='hidden'), bottom=legend$grobs[[1]],
              layout_matrix=matrix(c(1,3,2,3), ncol=2))
+
+## ----fig.height=300/72,fig.width=350/72----------------------------------
+p <- ggplot(dsamp, aes(x=cut, y=price, colour=clarity)) + geom_point(position=position_jitter(width=0.2)) +
+  coord_flex_cart(bottom=brackets_horizontal(), left=capped_vertical('none')) +
+  theme_bw() + theme(panel.border=element_blank(), axis.line = element_line(),
+                     legend.background = element_rect(colour='grey'))
+g <- reposition_legend(p, 'top left', plot=TRUE)
 
 ## ------------------------------------------------------------------------
 dsamp <- diamonds[sample(nrow(diamonds), 1000), ]

@@ -49,4 +49,3 @@ p <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
 
 gtable_show_names(p)
 }
-

@@ -20,4 +20,3 @@ axes when \code{FALSE}.}
 \code{\link[ggplot2]{facet_grid}} and \code{\link[ggplot2]{facet_wrap}}, but
 with axis lines and labels preserved on all panels.
 }
-

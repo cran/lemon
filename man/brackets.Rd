@@ -52,4 +52,3 @@ p
 # A further adjustment,
 p + theme(panel.grid.major.x = element_blank())
 }
-

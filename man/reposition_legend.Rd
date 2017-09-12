@@ -12,7 +12,7 @@ reposition_legend(aplot, position = NULL, legend = NULL, panel = "panel",
 \item{aplot}{a ggplot2 or gtable object.}
 
 \item{position}{Where to place the legend in the panel.
-Overrules \code{x}, \code{y}, and \code{just} arguments.}
+Overrules  \code{just} argument.}
 
 \item{legend}{The legend to place, if \code{NULL} (default),
 it is extracted from \code{aplot} if
@@ -46,7 +46,20 @@ any grob as legend.
 To modify the look of the legend, use themes and the natural ggplot functions
 found in \code{\link[ggplot2]{guide_legend}}.
 
-Panel name is by default \code{panel}, but when using facets it typically 
+\emph{Positioning} is done by argument \code{position} which places the panel
+relative in \code{panel} (see below).
+\code{position} resolves to three variables, \code{x}, \code{y}, and \code{just}.
+\code{x} and \code{y} is the coordinate in \code{panel}, where the anchorpoint of
+the legend (set via \code{just}) is placed.
+In other words, \code{just='bottom right'} places the bottom right corner of 
+the legend at coordinates \code{(x,y)}.
+
+The positioning can be set by argument \code{position} alone, which can be 
+further nudged by setting \code{position}, \code{x}, and \code{y}. 
+Alternatively, manually positioning can be obtained by setting arguments.
+\code{x}, \code{y}, and \code{just}.
+
+\emph{Panel} name is by default \code{panel}, but when using facets it typically 
 takes the form \code{panel-{col}-{row}}, but not for wrapped facets.
 Either print result from \code{\link[ggplot2]{ggplotGrob}} or use
 \code{\link{gtable_show_names}} to display all the names of the gtable 
@@ -75,10 +88,9 @@ reposition_legend(d + theme(legend.position='bottom'), x=0.3, y=0, just=c(0, -0.
 # For using with facets:
 reposition_legend(d + facet_grid(.~cut), 'top left', panel = 'panel-3-1')
 }
-\author{
-Stefan McKinnon Edwards <sme@iysik.com>
-}
 \seealso{
 \code{\link{g_legend}}, \code{\link{grid_arrange_shared_legend}}
 }
-
+\author{
+Stefan McKinnon Edwards <sme@iysik.com>
+}
