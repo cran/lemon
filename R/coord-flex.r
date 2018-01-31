@@ -10,7 +10,7 @@ NULL
 #' Cartesian coordinates with flexible options for drawing axes
 #'
 #' Allows user to inject a function for drawing axes, such as
-#' \code{\link{capped_horisontal}} or \code{\link{brackets_horisontal}}.
+#' \code{\link{capped_horizontal}} or \code{\link{brackets_horizontal}}.
 #'
 #' NB! A panel-border is typically drawn on top such that it covers tick marks,
 #' grid lines, and axis lines.
@@ -28,11 +28,11 @@ NULL
 #' and the function should return an \code{\link{absoluteGrob}} object.
 #'
 #' For examples of modifying the drawn object, see e.g.
-#' \code{\link{capped_horisontal}} or \code{\link{brackets_horisontal}}.
+#' \code{\link{capped_horizontal}} or \code{\link{brackets_horizontal}}.
 #'
 #' @rdname coord_flex
 #' @param top,left,bottom,right Function for drawing axis lines, ticks, and labels,
-#'    use e.g. \code{\link{capped_horisontal}} or \code{\link{brackets_horisontal}}.
+#'    use e.g. \code{\link{capped_horizontal}} or \code{\link{brackets_horizontal}}.
 #  @inheritParams coord_cartesian
 #' @param xlim,ylim Limits for the x and y axes.
 #' @param expand If \code{TRUE}, the default, adds a small expansion factor to
@@ -57,24 +57,24 @@ NULL
 #' # protrude to the outer most ticks.
 #' p + coord_capped_cart(left='top', bottom='none', gap=2)
 #'
-#' # We can use 'capped_horisontal' and 'capped_vertical' to specify for
+#' # We can use 'capped_horizontal' and 'capped_vertical' to specify for
 #' # each axis individually.
-#' p + coord_capped_cart(left='top', bottom=capped_horisontal('none', gap=2))
+#' p + coord_capped_cart(left='top', bottom=capped_horizontal('none', gap=2))
 #'
 #' # At this point we might as well drop using the short-hand and go full on:
-#' p + coord_flex_cart(left=brackets_vertical(), bottom=capped_horisontal('left'))
+#' p + coord_flex_cart(left=brackets_vertical(), bottom=capped_horizontal('left'))
 #'
 #' # Also works with secondary axes:
 #' p + scale_y_continuous(sec.axis=sec_axis(~5*., name='wt times 5')) +
-#'   coord_flex_cart(left=brackets_vertical(), bottom=capped_horisontal('right'),
+#'   coord_flex_cart(left=brackets_vertical(), bottom=capped_horizontal('right'),
 #'   right=capped_vertical('both', gap=0.02))
 #'
 #'
 #' # Supports the usual 'coord_fixed':
-#' p + coord_flex_fixed(ratio=1.2, bottom=capped_horisontal('right'))
+#' p + coord_flex_fixed(ratio=1.2, bottom=capped_horizontal('right'))
 #'
 #' # and coord_flip:
-#' p + coord_flex_flip(ylim=c(2,5), bottom=capped_horisontal('right'))
+#' p + coord_flex_flip(ylim=c(2,5), bottom=capped_horizontal('right'))
 coord_flex_cart <- function(xlim = NULL,
                             ylim = NULL,
                             expand = TRUE,
@@ -82,6 +82,9 @@ coord_flex_cart <- function(xlim = NULL,
                             left = waiver(),
                             bottom = waiver(),
                             right = waiver()) {
+  
+  test_orientation(top, right, bottom, left)
+  
   ggproto(NULL, CoordFlexCartesian,
     limits = list(x = xlim, y = ylim),
     expand = expand,
@@ -103,6 +106,9 @@ coord_flex_flip <- function(xlim = NULL,
                             left = waiver(),
                             bottom = waiver(),
                             right = waiver()) {
+  
+  test_orientation(top, right, bottom, left)
+  
   ggproto(NULL, CoordFlexFlipped,
           limits = list(x = xlim, y = ylim),
           expand = expand,
@@ -125,6 +131,9 @@ coord_flex_fixed <- function(ratio = 1,
                              left = waiver(),
                              bottom = waiver(),
                              right = waiver()) {
+  
+  test_orientation(top, right, bottom, left)
+  
   ggproto(NULL, CoordFlexFixed,
           limits = list(x = xlim, y = ylim),
           ratio = ratio,
@@ -163,6 +172,28 @@ flex_render_axis_v <- function(self, scale_details, theme) {
     right = right(scale_details, arrange[2], 'y', 'right', theme)
   )
 }
+
+# Checks that the provided axis function corresponds to the orientation of the
+# axis it is used upon.
+test_orientation <- function(top, right, bottom, left) {
+  if (!is.waive(top) && 
+      !is.null(attr(top, 'orientation', exact=TRUE)) &&
+      attr(top, 'orientation', exact=TRUE) == 'vertical') 
+    stop('`top` has been supplied a vertical axis function; this will not work.')
+  if (!is.waive(bottom) && 
+      !is.null(attr(bottom, 'orientation', exact=TRUE)) &&
+      attr(bottom, 'orientation', exact=TRUE) == 'vertical') 
+    stop('`bottom` has been supplied a vertical axis function; this will not work.')
+  if (!is.waive(left) && 
+      !is.null(attr(left, 'orientation', exact=TRUE)) &&
+      attr(left, 'orientation', exact=TRUE) == 'horizontal') 
+    stop('`left` has been supplied a horizontal axis function; this will not work.')
+  if (!is.waive(right) && 
+      !is.null(attr(right, 'orientation', exact=TRUE)) &&
+      attr(right, 'orientation', exact=TRUE) == 'horizontal') 
+    stop('`right` has been supplied a horizontal axis function; this will not work.')
+}
+  
 
 # ggproto objects -------------------------------------------------------------
 

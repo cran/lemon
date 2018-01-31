@@ -115,10 +115,16 @@ reposition_legend(d + theme_classic(), 'top left')
 ```
 
 To adjust the guidebox so it does not overpaint the panel border, use arguments
-`x` and `y`:
+`x` and `y`,
 
 ```{r fig.cap='Legend has to be nudged to not overpaint panel border.'}
 reposition_legend(d + theme_bw(), 'top left', x=0.002, y=1-0.002)
+```
+
+...  or use the argument `offset`:
+
+```{r fig.cap='Legend has to be nudged to not overpaint panel border, this time by `offset`.'}
+reposition_legend(d + theme_bw(), 'top left', offset=0.002)
 ```
 
 ### Warning regarding extracting legend
@@ -273,11 +279,45 @@ grid.arrange(p1+theme(legend.position='hidden'), p2+theme(legend.position='hidde
 
 There is however currently a shortcoming in `grid.arrange` and `arrangeGrob`
 that prevents it from using the full gtable object returned from `g_legend` in
-the margin arguments. We therefore subset to a specific grob[^gridExtra_fix].
+the margin arguments. We therefore subset to a specific grob.
 
 What worse is, if the legend contains multiple guides, the above approach will 
 not work directly. However, defining several `arrangeGrob` within each other
 is possible.
+
+## More examples
+
+### Complex layout with grid_arrange_shared_legend
+
+Asked on: https://stackoverflow.com/questions/46238676/common-legend-for-a-grid-plot
+
+> In this reproducible example grid plot, 3 plots have 3 fill colours, and z displays with the "col" blue, but in the fourth plot there is only 1 "col", so z displays as red.
+> 
+> I want to show only one common legend (which I can do), **but I want z to be blue in all four plots**. Is there a simple way to do that?
+
+Before:
+```{r example_shared_legend_complex_layout_before}
+require(tidyverse)
+require(grid)
+require(gridExtra)
+d0 <- read.csv(text="x, y, col\na,2,x\nb,2,y\nc,1,z")
+d1 <- read.csv(text="x, y, col\na,2,x\nb,2,y\nc,1,z")
+d2 <- read.csv(text="x, y, col\na,2,x\nb,2,y\nc,1,z")
+d3 <- read.csv(text="x, y, col\na,2,z\nb,2,z\nc,1,z")
+p0 <- ggplot(d0) + geom_col(mapping = aes(x, y, fill = col))
+p1 <- ggplot(d1) + geom_col(mapping = aes(x, y, fill = col))
+p2 <- ggplot(d2) + geom_col(mapping = aes(x, y, fill = col))
+p3 <- ggplot(d3) + geom_col(mapping = aes(x, y, fill = col))
+grid.arrange(p0, arrangeGrob(p1,p2,p3, ncol=3), ncol=1)
+```
+
+```{r example_shared_legend_complex_layout_after}
+nt <- theme(legend.position='hidden')
+grid_arrange_shared_legend(p0, arrangeGrob(p1+nt,p2+nt,p3+nt, ncol=3), ncol=1, nrow=2)
+```
+
+
+
 
 ## Plot for ggplot2-extensions
 
@@ -298,10 +338,12 @@ g <- reposition_legend(p, 'top left', plot=TRUE)
 It has since propogated throughout 
 [Stack Overflow](http://www.stackoverflow.com) answers.
 
-`grid_arrange_shared_legend` was originally proposed by 
-[Shaun Jackman](http://rpubs.com/sjackman) [original code](http://rpubs.com/sjackman/grid_arrange_shared_legend)
-which was further refined by `baptiste` at 
-[ggplot2's wiki](https://github.com/tidyverse/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs).
+Originally brought to you by
+  (Baptiste Auguié)[http://baptiste.github.io/]
+  (<https://github.com/tidyverse/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs>)
+  and 
+  (Shaun Jackman)[http://rpubs.com/sjackman]
+  (<http://rpubs.com/sjackman/grid_arrange_shared_legend>).
 It has been further modified here.
 
 `reposition_legend` was coded by [Stefan McKinnon Edwards](http://www.iysik.com/)/
@@ -316,7 +358,3 @@ d <- ggplot(dsamp, aes(carat, price)) +
 reposition_legend(d + theme_gray(base_size=26), 'top left')
 ```
 
-
-[^gridExtra_fix]: We have submitted a solution to gridExtra that should allow
-the use of the entire gtable in the margin arguments:
-https://github.com/baptiste/gridextra/issues/39

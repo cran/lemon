@@ -71,13 +71,18 @@ g_legend<-function(a.gplot){
 
 #' Share a legend between multiple plots
 #'
-#' Extract legend, combines plots using \code{\link[gridExtra]{arrangeGrob}},
+#' Extract legend, combines plots using \code{\link[gridExtra]{arrangeGrob}} / 
+#' \code{\link[gridExtra]{grid.arrange}},
 #' and places legend in a margin.
 #'
 #' 
 #'
-#' @param ... ggplot2 objects. Their legends are automatically hidden.
-#'            The legend is taken from the first argument.
+#' @param ... Objects to plot. First argument should be a ggplot2 object, 
+#'            as the legend is extracted from this.
+#'            Other arguments are passed on to 
+#'            \code{\link[gridExtra]{arrangeGrob}}, 
+#'            including named arguments that are not defined for \code{grid_arrange_shared_legend}.
+#'            ggplot2 objects have their legends hidden.
 #' @param ncol Integer, number of columns to arrange plots in.
 #' @param nrow Integer, number of rows to arrange plots in.
 #' @param position 'bottom' or 'right' for positioning legend.
@@ -86,10 +91,12 @@ g_legend<-function(a.gplot){
 #' @return gtable of combined plot, invisibly. 
 #'   Draw  gtable object using \code{\link[grid]{grid.draw}}.
 #' @author
-#'   Originally brought to you by \href{http://rpubs.com/sjackman}{Shaun Jackman}
-#'   (\href{http://rpubs.com/sjackman/grid_arrange_shared_legend}{original}),
-#'   and further improved by \href{http://baptiste.github.io/}{Baptiste Auguié}  at
-#'   \url{https://github.com/tidyverse/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs}.
+#'   Originally brought to you by
+#'   \href{http://baptiste.github.io/}{Baptiste Auguié} 
+#'   (\url{https://github.com/tidyverse/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs})
+#'   and 
+#'   \href{http://rpubs.com/sjackman}{Shaun Jackman}
+#'   (\href{http://rpubs.com/sjackman/grid_arrange_shared_legend}{original}).   
 #'   Stefan McKinnon Edwards added left and top margins.
 #' @import ggplot2 gridExtra grid
 #' @export
@@ -103,6 +110,16 @@ g_legend<-function(a.gplot){
 #' p4 <- qplot(depth, price, data = dsamp, colour = clarity)
 #' grid_arrange_shared_legend(p1, p2, p3, p4, ncol = 4, nrow = 1)
 #' grid_arrange_shared_legend(p1, p2, p3, p4, ncol = 2, nrow = 2)
+#' 
+#' # Passing on plots in a grob are not touched
+#' grid_arrange_shared_legend(p1, gridExtra::arrangeGrob(p2, p3, p4, ncol=3), ncol=1, nrow=2)
+#' 
+#' # We can also pass on named arguments to arrangeGrob:
+#' title <- grid::textGrob('This is grob', gp=grid::gpar(fontsize=14, fontface='bold'))
+#' nt <- theme(legend.position='none')
+#' grid_arrange_shared_legend(p1, 
+#'    gridExtra::arrangeGrob(p2+nt, p3+nt, p4+nt, ncol=3), ncol=1, nrow=2, 
+#'    top=title)
 grid_arrange_shared_legend <- function(...,
                                        ncol = length(list(...)),
                                        nrow = 1,
@@ -112,11 +129,13 @@ grid_arrange_shared_legend <- function(...,
 
   plots <- list(...)
   position <- match.arg(position)
-  g <- ggplotGrob(plots[[1]] + theme(legend.position = position))$grobs
-  legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
+  #g <- ggplotGrob(plots[[1]] + theme(legend.position = position))$grobs
+  #legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
+  legend <- g_legend(plots[[1]] + theme(legend.position = position)) 
   lheight <- sum(legend$height)
   lwidth <- sum(legend$width)
-  gl <- lapply(plots, function(x) x + theme(legend.position="none"))
+  gl <- lapply(plots, function(x) {
+    if (is.ggplot(x)) { x + theme(legend.position="none") } else { x }})
   gl <- c(gl, ncol = ncol, nrow = nrow)
 
   combined <- switch(position,
@@ -198,6 +217,9 @@ arrangeGrob <- gridExtra::arrangeGrob
 #' @param y vertical coordiante of legend, with 0 at bottom.
 #' @param just 'Anchor point' of legend; it is this point of the legend that is
 #'             placed at the \code{x} and \code{y} coordinates.
+#' @param offset Numeric vector, sets distance from edge of panel.
+#'               First element for horisontal distance, second for vertical.
+#'               Not used by arguments \code{x} and \code{y}.
 #' @param name,clip,z Parameters forwarded to 
 #'             \code{\link[gtable]{gtable_add_grob}}.
 #' @param plot Logical, when \code{TRUE} (default), draws plot with legend
@@ -234,26 +256,39 @@ reposition_legend <- function(aplot,
                              just=NULL,
                              name='guide-box',
                              clip='on',
+                             offset=c(0,0),
                              z=Inf,
                              plot=TRUE) {
 
   # Work out positioning
   if (!is.null(position)) {
-    position <- match.arg(position, c('bottom right','bottom','bottom left','left','top left','top','top right','right','center'))
+    if (length(offset) == 1) offset <- offset[c(1,1)]
+    if (!grid::is.unit(offset)) offset <- grid::unit(offset, 'npc')
+
+    position <- match.arg(position, c('bottom right','right bottom','bottom','bottom left','left bottom','left','top left','top','top right','left top','right top','right','center'))
     just <- switch(position,
       'bottom right' = c(x=1, y=0),
+      'right bottom' = c(x=1, y=0),
       'bottom' = c(x=0.5, y=0),
       'bottom left' = c(x=0, y=0),
+      'left bottom' = c(x=0, y=0),
       'left' = c(x=0, y=0.5),
       'top left' = c(x=0, y=1),
+      'left top' = c(x=0, y=1),
       'top' = c(x=0.5, y=1),
       'top right' = c(x=1, y=1),
+      'right top' = c(x=1, y=1),
       'right' = c(x=1, y=0.5),
       'center' = c(x=0.5, y=0.5)
     )
-    if (is.null(x)) x = unit(just[1], 'npc')
-    if (is.null(y)) y = unit(just[2], 'npc')
+    if (is.null(x)) x = unit(just[1], 'npc') + offset[1] * 
+      ifelse(grepl('right', position), -1, ifelse(grepl('left', position), 1, 0))
+    if (is.null(y)) y = unit(just[2], 'npc') + offset[2] *
+      ifelse(grepl('top', position), -1, ifelse(grepl('bottom', position), 1, 0))
   }
+  if (!is.null(x) && !grid::is.unit(x)) x <- unit(x, 'npc')
+  if (!is.null(y) && !grid::is.unit(y)) y <- unit(y, 'npc')
+
   if (is.null(x) | is.null(y) | is.null(just)) {
     stop('Please supply either `position`, or `x`, `y`, and `just` arguments.')
   }

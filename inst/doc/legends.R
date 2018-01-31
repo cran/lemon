@@ -57,6 +57,9 @@ reposition_legend(d + theme_classic(), 'top left')
 ## ----fig.cap='Legend has to be nudged to not overpaint panel border.'----
 reposition_legend(d + theme_bw(), 'top left', x=0.002, y=1-0.002)
 
+## ----fig.cap='Legend has to be nudged to not overpaint panel border, this time by `offset`.'----
+reposition_legend(d + theme_bw(), 'top left', offset=0.002)
+
 ## ------------------------------------------------------------------------
 g1 <- function(a.gplot){
   if (!gtable::is.gtable(a.gplot))
@@ -134,6 +137,24 @@ grid.arrange(p1+theme(legend.position='hidden'), p2+theme(legend.position='hidde
 grid.arrange(p1+theme(legend.position='hidden'), p2+theme(legend.position='hidden'),
              p3+theme(legend.position='hidden'), bottom=legend$grobs[[1]],
              layout_matrix=matrix(c(1,3,2,3), ncol=2))
+
+## ----example_shared_legend_complex_layout_before-------------------------
+require(tidyverse)
+require(grid)
+require(gridExtra)
+d0 <- read.csv(text="x, y, col\na,2,x\nb,2,y\nc,1,z")
+d1 <- read.csv(text="x, y, col\na,2,x\nb,2,y\nc,1,z")
+d2 <- read.csv(text="x, y, col\na,2,x\nb,2,y\nc,1,z")
+d3 <- read.csv(text="x, y, col\na,2,z\nb,2,z\nc,1,z")
+p0 <- ggplot(d0) + geom_col(mapping = aes(x, y, fill = col))
+p1 <- ggplot(d1) + geom_col(mapping = aes(x, y, fill = col))
+p2 <- ggplot(d2) + geom_col(mapping = aes(x, y, fill = col))
+p3 <- ggplot(d3) + geom_col(mapping = aes(x, y, fill = col))
+grid.arrange(p0, arrangeGrob(p1,p2,p3, ncol=3), ncol=1)
+
+## ----example_shared_legend_complex_layout_after--------------------------
+nt <- theme(legend.position='hidden')
+grid_arrange_shared_legend(p0, arrangeGrob(p1+nt,p2+nt,p3+nt, ncol=3), ncol=1, nrow=2)
 
 ## ----fig.height=300/72,fig.width=350/72----------------------------------
 p <- ggplot(dsamp, aes(x=cut, y=price, colour=clarity)) + geom_point(position=position_jitter(width=0.2)) +
