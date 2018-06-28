@@ -18,6 +18,9 @@ NULL
 #' connect observations within the same group! However,
 #' if \code{linecolour} is \emph{not} \code{waiver()}, connections
 #' will be made between groups, but possible in an incorrect order.
+#' \strong{Note!} If the x-variable is a factor, the `group' aesthetic will
+#' \emph{also} use this, thus lines between x-values are not grouped.
+#' Use \code{aes(group=...)} to enforce a group across x-values.
 #' 
 #' @section Aesthetics:
 #' \code{geom_pointline} and \code{geom_pointpath} understands the following 
@@ -60,8 +63,12 @@ NULL
 #'   define both data and aesthetics and shouldn't inherit behaviour from the 
 #'   default plot specification, e.g. \code{\link[ggplot2]{borders}}.
 #' @param linesize Width of of line.
-#' @param distance Gap size between point and end of lines;
+#' @param distance Gap size between point and end of lines when the distance
+#'   between points exceeds \code{threshold};
 #'   use \code{\link[grid]{unit}}. Is converted to 'pt' if given as simple numeric.
+#' @param threshold,shorten Use \code{threshold} to adjust when the line between
+#'   two points should be drawn with a gap (per argument above) or shortened by
+#'   the proportion given by \code{shorten}.  
 #' @param linecolour,linecolor When not \code{waiver()}, the line is drawn with 
 #'   this colour instead of that set by aesthetic \code{colour}.
 #' 
@@ -71,6 +78,8 @@ geom_pointpath <- function(mapping = NULL, data = NULL, stat = "identity",
                       position = "identity", na.rm = FALSE,
                       show.legend = NA, inherit.aes = TRUE, 
                       distance = unit(3, 'pt'), 
+                      shorten = 0.5,
+                      threshold = 0.1,
                       lineend = "butt",
                       linejoin = "round",
                       linemitre = 1,
@@ -92,12 +101,14 @@ geom_pointpath <- function(mapping = NULL, data = NULL, stat = "identity",
     params = list(
       na.rm = na.rm,
       distance = distance,
+      shorten = shorten,
+      threshold = threshold,
       lineend = lineend,
       linejoin = linejoin,
       linemitre = linemitre,
       linesize = linesize,
       linecolour = linecolour,
-      arrow = arrow,      
+      arrow = arrow,
       ...
     )
   )
@@ -122,17 +133,23 @@ GeomPointPath <- ggplot2::ggproto('GeomPointPath',
   ),
   
   draw_panel = function(data, panel_params, coord, na.rm = FALSE,
-                        distance = grid::unit(3, 'pt'), linesize = 0.5,
+                        distance = grid::unit(3, 'pt'), 
+                        shorten = 0.5,
+                        threshold = 0.1,
+                        linesize = 0.5,
                         linecolour = waiver(),
                         arrow = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 1
                         ) {
-    if (!is.unit(distance) && is.numeric(distance)) 
+    # Test input parameters
+    if (is.null(distance) || is.na(distance)) 
+      distance <- grid::unit(0, 'pt')
+
+    if (!grid::is.unit(distance) && is.numeric(distance)) 
       distance <- grid::unit(distance, 'pt')
     
     # Contents of GeomPoint$draw_panel in geom-point.r
     coords <- coord$transform(data, panel_params)
-    coords_p <- coords
     gr_points <- ggplot2:::ggname("geom_point",
            grid::pointsGrob(
              coords$x, coords$y,
@@ -146,7 +163,6 @@ GeomPointPath <- ggplot2::ggproto('GeomPointPath',
              )
            )
     )
-    # gr_points <- GeomPoint$draw_panel(data, panel_params, coord, na.rm)
     
     # Contents of GeomPath$draw_panel in geom-path
     if (!anyDuplicated(data$group)) {
@@ -181,57 +197,78 @@ GeomPointPath <- ggplot2::ggproto('GeomPointPath',
 
     # Work out grouping variables for grobs
     n <- nrow(munched)
-    #start <- c(TRUE, group_diff)
     group_diff <- munched$group[-1] != munched$group[-n]
-    end <-   c(group_diff, TRUE)
+    munched$end <-   c(group_diff, TRUE)
 
-    
-    # Make df with x0,y0,x1,y1
-    munched$x1 <- c(munched$x[-1], NA)
-    munched$y1 <- c(munched$y[-1], NA)
-    #munched$start <- start
-    munched$end <- end
-    
-    # Calculate angle between each pair of points:
     munched <- within(munched, {
-      xn = x;
-      yn = y;
-      theta = atan2(y1-y, x1-x);
-      size = grid::unit(size, 'pt');
-
-      x = grid::unit(x, 'native') + size*cos(theta) + distance*cos(theta);
-      x1 = grid::unit(x1, 'native') - size*cos(theta) - distance*cos(theta);
-      y = grid::unit(y, 'native') + size*sin(theta) + distance*sin(theta);
-      y1 = grid::unit(y1, 'native') - size*sin(theta) - distance*sin(theta)
+      x1 = c(x[-1], NA);
+      y1 = c(y[-1], NA);
+      deltax = x1 - x;
+      deltay = y1 - y;
+      length <- sqrt(deltax**2 + deltay**2);
     })
     
-    gr_lines <- grid::segmentsGrob(
-      x0=munched$x[!end], y0=munched$y[!end], x1=munched$x1[!end], y1=munched$y1[!end],
-      arrow = arrow,
-      gp = grid::gpar(
-        col = ggplot2::alpha(munched$colour, munched$alpha)[!end],
-        fill = ggplot2::alpha(munched$colour, munched$alpha)[!end],
-        lwd = linesize * .pt,
-        lty = munched$linetype[!end],
-        lineend = lineend,
-        linejoin = linejoin,
-        linemitre = linemitre
-      )
-    )
-    if (!is.waive(linecolour)) gr_lines$gp$col <- linecolour
+    if (any(munched$length > threshold, na.rm=TRUE) &
+        as.numeric(distance) != 0) {
+      # Calculate angle between each pair of points and move endpoints:
+      df <- within(munched[munched$length > threshold,], {
+        theta = atan2(deltay, deltax);
+        size = grid::unit(size, 'pt');
+        x = grid::unit(x, 'native') + size*cos(theta) + distance*cos(theta);
+        x1 = grid::unit(x1, 'native') - size*cos(theta) - distance*cos(theta);
+        y = grid::unit(y, 'native') + size*sin(theta) + distance*sin(theta);
+        y1 = grid::unit(y1, 'native') - size*sin(theta) - distance*sin(theta);
+      })      
+      gr_distant <- with(df, grid::segmentsGrob(
+        x0=x[!end], y0=y[!end], x1=x1[!end], y1=y1[!end],
+        arrow = arrow,
+        gp = grid::gpar(
+          col = ggplot2::alpha(colour, alpha)[!end],
+          fill = ggplot2::alpha(colour, alpha)[!end],
+          lwd = linesize * .pt,
+          lty = linetype[!end],
+          lineend = lineend,
+          linejoin = linejoin,
+          linemitre = linemitre
+        )
+      ))
+      if (!is.waive(linecolour)) 
+        gr_distant$gp$col <- linecolour
+    } else {
+      gr_distant <- ggplot2::zeroGrob()
+    }
     
-    #save(data, panel_params, coord, coords, coords_p, gr_lines, gr_points, munched,  file='tmp.Rdata')
-     
-    #gr_points
-    grid::gList(gr_points, gr_lines)
+    if (any(munched$length <= threshold, na.rm=TRUE)) {
+      df <- within(munched[munched$length <= threshold,], {
+        x  = x + shorten/2 * deltax; x = grid::unit(x, 'native');
+        y  = y + shorten/2 * deltay; y = grid::unit(y, 'native');
+        x1 = x1 - shorten/2 * deltax; x1 = grid::unit(x1, 'native');
+        y1 = y1 - shorten/2 * deltay; y1 = grid::unit(y1, 'native');
+      })
+      
+      gr_short <- with(df, grid::segmentsGrob(
+        x0=x[!end], y0=y[!end], x1=x1[!end], y1=y1[!end],
+        arrow = arrow,
+        gp = grid::gpar(
+          col = ggplot2::alpha(colour, alpha)[!end],
+          fill = ggplot2::alpha(colour, alpha)[!end],
+          lwd = linesize * .pt,
+          lty = linetype[!end],
+          lineend = lineend,
+          linejoin = linejoin,
+          linemitre = linemitre
+        )
+      ))
+      if (!is.waive(linecolour)) 
+        gr_short$gp$col <- linecolour
+    } else {
+      gr_short <- ggplot2::zeroGrob()
+    }
+    
+    grid::gList(gr_points, gr_distant, gr_short)
   },
   
   draw_key = ggplot2::draw_key_point
-  # function(data, params, size) {
-  #   grid::grobTree(ggplot2::draw_key_path(data, params, size),
-  #               ggplot2::draw_key_point(data, params, size)
-  #   )
-  # }
 )
 
 
@@ -242,6 +279,8 @@ geom_pointline <- function(mapping = NULL, data = NULL, stat = "identity",
                            position = "identity", na.rm = FALSE,
                            show.legend = NA, inherit.aes = TRUE, 
                            distance = unit(3, 'pt'), 
+                           shorten = 0.5,
+                           threshold = 0.1,
                            lineend = "butt",
                            linejoin = "round",
                            linemitre = 1,
@@ -264,12 +303,14 @@ geom_pointline <- function(mapping = NULL, data = NULL, stat = "identity",
     params = list(
       na.rm = na.rm,
       distance = distance,
+      shorten = shorten,
+      threshold = threshold,
       lineend = lineend,
       linejoin = linejoin,
       linemitre = linemitre,
-      linesize = 0.5,
+      linesize = linesize,
       linecolour = linecolour,
-      arrow = arrow,      
+      arrow = arrow,    
       ...
     )
   )
@@ -287,3 +328,4 @@ GeomPointLine <- ggproto("GeomPointLine", GeomPointPath,
       data[order(data$PANEL, data$group, data$x), ]
     }
 )
+

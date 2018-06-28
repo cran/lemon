@@ -19,7 +19,7 @@
 is.small <- function(x) {
   #if (is.list(x) & !inherits(x[[1]], 'unit.list') & length(x) == 1) x <- x[[1]]
   #if (inherits(x, 'unit.list')) return(FALSE)
-  if (!is.unit(x)) stop('`h` is not a unit.')
+  if (!grid::is.unit(x)) stop('`h` is not a unit.')
   if (is.null(attr(x, 'unit'))) return(FALSE)
   if (as.numeric(x) == 1 & attr(x, 'unit') == 'null') return(FALSE)
   if (as.numeric(x) == 0) return(TRUE)
@@ -67,8 +67,8 @@ is.small <- function(x) {
 gtable_show_grill <- function(x, plot=TRUE) {
   if (is.ggplot(x)) x <- ggplotGrob(x)
 
-  gp.gutter <- gpar(colour='grey', lty='dashed')
-  gp.txt <- gpar(colour=grDevices::grey(0.9), fontsize=8)
+  gp.gutter <- grid::gpar(colour='grey', lty='dashed')
+  gp.txt <- grid::gpar(colour=grDevices::grey(0.9), fontsize=8)
   if (is.null(x$vp)) {
     x$vp <- viewport(clip = 'on')
   }
@@ -113,7 +113,7 @@ gtable_show_grill <- function(x, plot=TRUE) {
 #' p <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
 #'
 #' gtable_show_names(p)
-gtable_show_names <- function(x, plot=TRUE, rect.gp=gpar(col='black', fill='white', alpha=1/4)) {
+gtable_show_names <- function(x, plot=TRUE, rect.gp=grid::gpar(col='black', fill='white', alpha=1/4)) {
   if (is.ggplot(x)) x <- ggplotGrob(x)
 
   for (i in 1:nrow(x$layout)) {

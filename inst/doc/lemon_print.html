@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stefan McKinnon Edwards sme@iysik.com" />
 
-<meta name="date" content="2018-01-31" />
+<meta name="date" content="2018-06-28" />
 
 <title>Lemon print – pretty printing data frames and tables</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Lemon print – pretty printing data frames and tables</h1>
 <h4 class="author"><em>Stefan McKinnon Edwards <a href="mailto:sme@iysik.com">sme@iysik.com</a></em></h4>
-<h4 class="date"><em>2018-01-31</em></h4>
+<h4 class="date"><em>2018-06-28</em></h4>
 
 
 
@@ -528,6 +528,19 @@ summary(USArrests)
 <h3>dplyr</h3>
 <pre><code>```{r dplyr,kable.opts=list(caption='Also works on `dplyr` objects.')}
 library(dplyr)
+```</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following object is masked from 'package:gridExtra':
+## 
+##     combine</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre><code>```{r dplyr,kable.opts=list(caption='Also works on `dplyr` objects.')}
 mtcars %&gt;% group_by(cyl) %&gt;% summarise(mean(disp))
 ```</code></pre>
 <table>

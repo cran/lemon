@@ -8,6 +8,7 @@ knitr::opts_template$set(smallfigure = list(fig.height=2, fig.width=3))
 ## ----fig.cap='Imprecise positioning of legend with `theme(legend.position)`.'----
 library(ggplot2)
 library(grid)
+library(gridExtra)
 dsamp <- diamonds[sample(nrow(diamonds), 1000), ]
 (d <- ggplot(dsamp, aes(carat, price)) +
   geom_point(aes(colour = clarity)) +
@@ -139,9 +140,10 @@ grid.arrange(p1+theme(legend.position='hidden'), p2+theme(legend.position='hidde
              layout_matrix=matrix(c(1,3,2,3), ncol=2))
 
 ## ----example_shared_legend_complex_layout_before-------------------------
-require(tidyverse)
-require(grid)
-require(gridExtra)
+library(ggplot2)
+library(grid)
+library(gridExtra)
+
 d0 <- read.csv(text="x, y, col\na,2,x\nb,2,y\nc,1,z")
 d1 <- read.csv(text="x, y, col\na,2,x\nb,2,y\nc,1,z")
 d2 <- read.csv(text="x, y, col\na,2,x\nb,2,y\nc,1,z")
