@@ -7,7 +7,7 @@
 \usage{
 facet_rep_grid(..., repeat.tick.labels = FALSE)
 
-facet_rep_wrap(..., repeat.tick.labels = FALSE)
+facet_rep_wrap(..., scales = "fixed", repeat.tick.labels = FALSE)
 }
 \arguments{
 \item{...}{Arguments used for \code{\link[ggplot2]{facet_grid}} or
@@ -18,6 +18,8 @@ have their tick labels (i.e. the numbers) removed.
 Set this to \code{TRUE} to keep all labels,
 or any combination of top, bottom, left, right to
 keep only those specified. Also acceps 'x' and 'y'.}
+
+\item{scales}{As for \code{facet_grid}, but alters behaviour of \code{repeat.tick.labels}.}
 }
 \description{
 \code{\link[ggplot2]{facet_grid}} and \code{\link[ggplot2]{facet_wrap}}, but

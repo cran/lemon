@@ -80,3 +80,11 @@ d2 <- d2 + guides(colour=guide_legend(ncol=3)) +
   theme(legend.background = element_rect(colour='grey'))
 reposition_legend(d2, position='center', panel='panel-2-3')
 
+## ----echo=FALSE,fig.cap='Some points which should center around 0, but the scale indicates it\' off-target.'----
+df <- data.frame(x=sample(letters[1:2], 30, replace=TRUE),
+                 y=sort(rnorm(30, 0.5)))
+(p <- ggplot(df, aes(x=x, y=y)) + geom_point(position=position_jitter(width=0.2)))
+
+## ----fig.cap='With the now added symmetric scale, it is nicely centered around 0.'----
+p + scale_y_symmetric(mid=0)
+

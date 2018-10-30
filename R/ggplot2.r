@@ -38,6 +38,7 @@ is.waive <- function(x) inherits(x, "waiver")
 #' @keywords internal
 #' @rdname ggplot2-non-exports
 #' @name if-not-null
+#' @export 
 "%||%" <- function(a, b) {
   if (!is.null(a)) a else b
 }
@@ -53,20 +54,6 @@ render_axis <- function(panel_params, axis, scale, position, theme) {
   }
 }
 
-
-# From ggplot2/R/theme-elements.r
-element_render <- function(theme, element, ..., name = NULL) {
-
-  # Get the element from the theme, calculating inheritance
-  el <- ggplot2::calc_element(element, theme)
-  if (is.null(el)) {
-    message("Theme element ", element, " missing")
-    return(zeroGrob())
-  }
-
-  grob <- ggplot2::element_grob(el, ...)
-  ggname(paste(element, name, sep = "."), grob)
-}
 
 #' @import grid
 ggname <- function (prefix, grob) {
@@ -103,3 +90,24 @@ warning_wrap <- function(...) {
   warning(paste0(wrapped, collapse = "\n"), call. = FALSE)
 }
 
+is.formula <- function(x) inherits(x, "formula")
+
+# From ggplot2/R/axis-secondary.R
+is.sec_axis <- function(x) {
+  inherits(x, "AxisSecondary")
+}
+
+
+# From ggplot2/R/theme.r
+# renders a theme as complete
+#' @importFrom plyr defaults
+plot_theme <- function (x, default = theme_get()) {
+  theme <- x$theme
+  if (is_theme_complete(theme)) {
+    theme
+  }
+  else {
+    plyr::defaults(theme, default)
+  }
+}
+is_theme_complete <- function(x) isTRUE(attr(x, "complete"))

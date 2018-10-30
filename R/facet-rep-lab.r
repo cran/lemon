@@ -24,7 +24,13 @@ NULL
 facet_rep_grid <- function(..., repeat.tick.labels=FALSE) {
   f <- ggplot2::facet_grid(...)
   
-  params <- append(f$params, list(repeat.tick.labels=reduce.ticks.labels.settings(repeat.tick.labels)))
+  rtl <- reduce.ticks.labels.settings(repeat.tick.labels)
+  # if (scales %in% c('free','free_y') && !any(c('left','right') %in% rtl))
+  #   rtl <- c(rtl, 'left')
+  # if (scales %in% c('free','free_x') && !any(c('top','bottom') %in% rtl))
+  #   rtl <- c(rtl, 'bottom')
+  
+  params <- append(f$params, list(repeat.tick.labels=rtl))
   ggplot2::ggproto(NULL, FacetGridRepeatLabels,
           shrink=f$shrink,
           params=params)

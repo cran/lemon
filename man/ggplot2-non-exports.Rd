@@ -17,7 +17,7 @@ a \%|W|\% b
 
 a \%||\% b
 
-guide_axis(at, labels, position = "right", theme)
+guide_axis(at, labels, position = "right", theme, label_element, gp_df)
 }
 \arguments{
 \item{x}{The object to inquery is a \code{waiver}.}
@@ -25,7 +25,7 @@ guide_axis(at, labels, position = "right", theme)
 \description{
 The waivers are from \file{ggplot2/R/utilities.r}.
 
-From R/guide-axes.r
+From R/guide-axis.r
 }
 \seealso{
 \code{\link[ggplot2]{waiver}}

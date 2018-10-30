@@ -19,7 +19,7 @@ NULL
 #' This method however returns a \code{gtable} object which encapsulates
 #' the entire legend. The legend itself may be a collection of \code{gtable}.
 #' We have only noticed a problem with this extra layer when using the returned
-#' legend with \code{\link[gridExtra]{grid.arrange}} (see examples).
+#' legend with \code{\link[gridExtra]{arrangeGrob}} (see examples).
 #'
 #' @param a.gplot ggplot2 or gtable object.
 #' @return gtable (grob) object. Draw with \code{\link[grid]{grid.draw}}.
@@ -143,7 +143,7 @@ guidebox_as_column <- function(legend, which.legend=1, add.title=FALSE) {
 #' Share a legend between multiple plots
 #'
 #' Extract legend, combines plots using \code{\link[gridExtra]{arrangeGrob}} / 
-#' \code{\link[gridExtra]{grid.arrange}},
+#' \code{grid.arrange},
 #' and places legend in a margin.
 #'
 #' 
@@ -174,7 +174,7 @@ guidebox_as_column <- function(legend, which.legend=1, add.title=FALSE) {
 #' @seealso \code{\link{g_legend}}, \code{\link{reposition_legend}}
 #' @examples
 #' library(ggplot2)
-#' dsamp <- diamonds[sample(nrow(diamonds), 1000), ]
+#' dsamp <- diamonds[sample(nrow(diamonds), 300), ]
 #' p1 <- qplot(carat, price, data = dsamp, colour = clarity)
 #' p2 <- qplot(cut, price, data = dsamp, colour = clarity)
 #' p3 <- qplot(color, price, data = dsamp, colour = clarity)
