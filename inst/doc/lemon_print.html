@@ -223,62 +223,6 @@ head(USArrests)
 ## Colorado      7.9     204       78 38.7
 </code></pre>
 
-<pre><code class="r">head(USArrests)
-</code></pre>
-
-<table><thead>
-<tr>
-<th align="left"></th>
-<th align="right">Murder</th>
-<th align="right">Assault</th>
-<th align="right">UrbanPop</th>
-<th align="right">Rape</th>
-</tr>
-</thead><tbody>
-<tr>
-<td align="left">Alabama</td>
-<td align="right">13.2</td>
-<td align="right">236</td>
-<td align="right">58</td>
-<td align="right">21.2</td>
-</tr>
-<tr>
-<td align="left">Alaska</td>
-<td align="right">10.0</td>
-<td align="right">263</td>
-<td align="right">48</td>
-<td align="right">44.5</td>
-</tr>
-<tr>
-<td align="left">Arizona</td>
-<td align="right">8.1</td>
-<td align="right">294</td>
-<td align="right">80</td>
-<td align="right">31.0</td>
-</tr>
-<tr>
-<td align="left">Arkansas</td>
-<td align="right">8.8</td>
-<td align="right">190</td>
-<td align="right">50</td>
-<td align="right">19.5</td>
-</tr>
-<tr>
-<td align="left">California</td>
-<td align="right">9.0</td>
-<td align="right">276</td>
-<td align="right">91</td>
-<td align="right">40.6</td>
-</tr>
-<tr>
-<td align="left">Colorado</td>
-<td align="right">7.9</td>
-<td align="right">204</td>
-<td align="right">78</td>
-<td align="right">38.7</td>
-</tr>
-</tbody></table>
-
 <p>Now load <code>lemon</code> and set the <code>lemon_print</code> functions.</p>
 
 <pre><code class="r">library(lemon)
@@ -287,7 +231,7 @@ knit_print.data.frame &lt;- lemon_print
 
 <p><strong>The same view is now nicely printed!</strong></p>
 
-<pre><code>```{r caption=&quot;Data frame is now printed using `kable`.&quot;}
+<pre><code>```{r caption=&quot;Data frame is now printed using `kable`.&quot;,render=lemon_print}
 head(USArrests)
 ```
 </code></pre>
@@ -696,9 +640,7 @@ summary(USArrests)
 
 <h3>dplyr</h3>
 
-<pre><code>```{r dplyr,kable.opts=list(caption=&#39;Also works on `dplyr` objects.&#39;)}
-library(dplyr)
-```
+<pre><code class="r">library(dplyr)
 </code></pre>
 
 <pre><code>## 
@@ -718,6 +660,9 @@ library(dplyr)
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union
+</code></pre>
+
+<pre><code class="r">knit_print.tbl &lt;- lemon_print
 </code></pre>
 
 <pre><code>```{r dplyr,kable.opts=list(caption=&#39;Also works on `dplyr` objects.&#39;)}

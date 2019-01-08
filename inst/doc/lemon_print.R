@@ -1,8 +1,9 @@
 ## ----setup,include=FALSE-------------------------------------------------
 library(knitr)
+library(stringr)
 
 knitr::opts_chunk$set(fig.height=4, fig.width=6, verbatim=FALSE,
-                      cache=TRUE, autodep = TRUE, cache.path='lemon_print-cache/')
+                      cache=FALSE, autodep = TRUE, cache.path='lemon_print-cache/')
 
 # Show chunk verbatim
 # Source: http://stackoverflow.com/questions/19908158/show-an-r-markdown-chunk-in-the-final-output
@@ -23,14 +24,11 @@ knit_hooks$set(source = function(x, options){
 data(USArrests)
 head(USArrests)
 
-## ----render=lemon_print--------------------------------------------------
-head(USArrests)
-
-## ------------------------------------------------------------------------
+## ----message=FALSE-------------------------------------------------------
 library(lemon)
 knit_print.data.frame <- lemon_print
 
-## ----caption="Data frame is now printed using `kable`.",verbatim=TRUE----
+## ----caption="Data frame is now printed using `kable`.",verbatim=TRUE,render=lemon_print----
 head(USArrests)
 
 ## ----normal_print,render=normal_print,verbatim=TRUE----------------------
@@ -50,7 +48,10 @@ summary(USArrests)
 head(mtcars)
 with(mtcars, table(cyl, gear))
 
-## ----dplyr,kable.opts=list(caption='Also works on `dplyr` objects.'),verbatim=TRUE----
+## ------------------------------------------------------------------------
 library(dplyr)
+knit_print.tbl <- lemon_print
+
+## ----dplyr,kable.opts=list(caption='Also works on `dplyr` objects.'),verbatim=TRUE----
 mtcars %>% group_by(cyl) %>% summarise(mean(disp))
 
