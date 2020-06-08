@@ -3,8 +3,8 @@ Type: Package
 Title: Freshing Up your 'ggplot2' Plots
 URL: https://github.com/stefanedwards/lemon
 BugReports: https://github.com/stefanedwards/lemon/issues
-Version: 0.4.4
-Date: 2020-04-01
+Version: 0.4.5
+Date: 2020-06-02
 Authors@R: c(
     person('Stefan McKinnon', 'Edwards', email='sme@iysik.com',
     comment=c(ORCID='0000-0002-4628-8148'),
@@ -36,7 +36,7 @@ Collate: 'ggplot2.r' 'lemon-plot.r' 'axis-annotation.r' 'brackets.R'
 Suggests: rmarkdown, stringr, dplyr, testthat
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2020-04-02 20:49:04 UTC; smhe
+Packaged: 2020-06-08 05:39:46 UTC; smhe
 Author: Stefan McKinnon Edwards [aut, ctb, cre]
     (<https://orcid.org/0000-0002-4628-8148>),
   Baptiste Auguie [ctb] (For g_legend and grid_arrange_shared_legend),
@@ -45,4 +45,4 @@ Author: Stefan McKinnon Edwards [aut, ctb, cre]
   Winston Chang [ctb] (ggplot2 functions)
 Maintainer: Stefan McKinnon Edwards <sme@iysik.com>
 Repository: CRAN
-Date/Publication: 2020-04-03 16:00:18 UTC
+Date/Publication: 2020-06-08 09:10:03 UTC
