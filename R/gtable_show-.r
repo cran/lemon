@@ -52,7 +52,6 @@ is.small <- function(x) {
 #'          gtable object with \code{\link[ggplot2]{ggplotGrob}}.
 #' @param plot Logical. When \code{TRUE} (default), draws resulting gtable
 #'             object on a new page.
-
 #' @return Modified gtable object, invisibly.
 #' @rdname gtable_show
 #' @import ggplot2 gtable grid grDevices
@@ -101,11 +100,7 @@ gtable_show_grill <- function(x, plot=TRUE) {
   invisible(x)
 }
 
-# @inheritParams gtable_show_grill
-#' @param x A gtable object. If given a ggplot object, it is converted to a
-#'          gtable object with \code{\link[ggplot2]{ggplotGrob}}.
-#' @param plot Logical. When \code{TRUE} (default), draws resulting gtable
-#'             object on a new page.#' 
+#  @inheritParams gtable_show_grill
 #' @param rect.gp Graphical parameters (\code{\link[grid]{gpar}}) for background drop.
 #' @rdname gtable_show
 #' @import ggplot2 gtable grid

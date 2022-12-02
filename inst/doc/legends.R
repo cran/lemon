@@ -83,16 +83,11 @@ print(g1(da))
 print(g2(da))
 
 ## ----fig.cap="Facetted panels' names."----------------------------------------
-d2 <- d + facet_grid(.~cut)
+d2 <- d + facet_grid(.~cut, )
 gtable_show_names(d2)
 
 ## ----reposition_legend_facet1,fig.cap='Placing the legend in a facet panel.'----
-g <- ggplotGrob(d2)
-panels <- grepl('panel',g$layout$name)
-right.most <- max(g$layout$r[panels])
-one.of.them <- with(g$layout, which(panels & r == right.most)[1])
-panel_name <- g$layout$name[one.of.them]
-reposition_legend(d2, 'top left', panel = panel_name)
+reposition_legend(d2, 'top left', panel = 'panel-1-5')
 
 ## ----reposition_legend_facet2,fig.cap='Placing the legend in an empty panel when using `facet_wrap`.'----
 reposition_legend(d + facet_wrap(~cut, ncol=3), 'top left', panel='panel-3-2')

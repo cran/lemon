@@ -38,16 +38,12 @@ this is a ggplot2 object.}
 \item{just}{'Anchor point' of legend; it is this point of the legend that is
 placed at the \code{x} and \code{y} coordinates.}
 
-\item{name, clip}{Parameters forwarded to 
+\item{name, clip, z}{Parameters forwarded to
 \code{\link[gtable]{gtable_add_grob}}.}
 
 \item{offset}{Numeric vector, sets distance from edge of panel.
 First element for horisontal distance, second for vertical.
 Not used by arguments \code{x} and \code{y}.}
-
-\item{z}{Z-level of legend. When \code{Inf} (default), legend is placed just
-\emph{under} the axis-lines. If you want it on top of everything, use a 
-sufficient large number, but not \code{Inf}.}
 
 \item{plot}{Logical, when \code{TRUE} (default), draws plot with legend
 repositioned on a new page.}
@@ -70,18 +66,18 @@ relative in \code{panel} (see below).
 \code{position} resolves to three variables, \code{x}, \code{y}, and \code{just}.
 \code{x} and \code{y} is the coordinate in \code{panel}, where the anchorpoint of
 the legend (set via \code{just}) is placed.
-In other words, \code{just='bottom right'} places the bottom right corner of 
+In other words, \code{just='bottom right'} places the bottom right corner of
 the legend at coordinates \code{(x,y)}.
 
-The positioning can be set by argument \code{position} alone, which can be 
-further nudged by setting \code{position}, \code{x}, and \code{y}. 
+The positioning can be set by argument \code{position} alone, which can be
+further nudged by setting \code{position}, \code{x}, and \code{y}.
 Alternatively, manually positioning can be obtained by setting arguments.
 \code{x}, \code{y}, and \code{just}.
 
-\emph{Panel} name is by default \code{panel}, but when using facets it typically 
+\emph{Panel} name is by default \code{panel}, but when using facets it typically
 takes the form \code{panel-{col}-{row}}, but not for wrapped facets.
 Either print result from \code{\link[ggplot2]{ggplotGrob}} or use
-\code{\link{gtable_show_names}} to display all the names of the gtable 
+\code{\link{gtable_show_names}} to display all the names of the gtable
 object.
 
 \code{panel} takes multiple names, and will then use these components'
@@ -104,16 +100,12 @@ reposition_legend(d + theme(legend.position='bottom'), 'top left')
 # Use odd specifications, here offset the legend with half its height from the bottom.
 reposition_legend(d + theme(legend.position='bottom'), x=0.3, y=0, just=c(0, -0.5))
 
-# For using with facets, use gtable_show_names to find the panel's name:
-\donttest{
-gtable_show_names(d + facet_grid(.~cut)) 
-panel_name <- ifelse(packageVersion("ggplot2") >= 
-   package_version("3.3.1"), 'panel-1-5', 'panel-3-1')
-reposition_legend(d + facet_grid(.~cut), 'top left', panel = panel_name)
-}
+# For using with facets:
+reposition_legend(d + facet_grid(.~cut), 'top left', panel = 'panel-1-5')
 }
 \seealso{
 \code{\link{g_legend}}, \code{\link{grid_arrange_shared_legend}}
+  and \code{\link{gtable_show_names}} for displaying names of facet's panels.
 }
 \author{
 Stefan McKinnon Edwards <sme@iysik.com>

@@ -63,7 +63,8 @@ To ensure the modified axis lines are visible, use
 \section{User defined functions}{
 
 The provided function in \code{top}, \code{right}, \code{bottom}, and \code{left}
-defaults to \code{panel_guides_grob} which is defined in \file{gR/coord-cartesian.r}.
+defaults to \code{render_axis} which is defined in \file{ggplot2/R/coord-.r}, which in
+turns calls \code{guide_axis} (see \file{ggplot2/R/guides-axis.r}).
 
 The provided function is with the arguments
 \code{scale_details}, \code{axis}, \code{scale}, \code{position}, and \code{theme},

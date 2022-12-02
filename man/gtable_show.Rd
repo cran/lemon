@@ -18,7 +18,7 @@ gtable_show_names(
 gtable object with \code{\link[ggplot2]{ggplotGrob}}.}
 
 \item{plot}{Logical. When \code{TRUE} (default), draws resulting gtable
-object on a new page.#'}
+object on a new page.}
 
 \item{rect.gp}{Graphical parameters (\code{\link[grid]{gpar}}) for background drop.}
 }

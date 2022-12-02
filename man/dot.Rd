@@ -12,7 +12,7 @@
 \arguments{
 \item{x}{File path that is appended to \code{BASEDIR}.}
 
-\item{root}{Root of your working directory, 
+\item{root}{Root of your working directory,
 from which \code{x} is relative too.}
 
 \item{mustExist}{Logical value; if \code{TRUE} and the resulting path does
@@ -31,24 +31,22 @@ returns a path relative to \code{root}.}
 \item{...}{Arguments passed on to \code{.dot}.}
 }
 \value{
-A function that returns file paths constructed from 
+A function that returns file paths constructed from
         \code{root}, \code{x}, and \code{...}.
-        
+
         \emph{Side effect:} It creates the directory.
 }
 \description{
-The \code{.dot} functions creates functions that allows relative-like 
+The \code{.dot} functions creates functions that allows relative-like
 specification of paths, but are safe from changing working directory.
 }
 \examples{
-\dontrun{
 
-.data <- .dot('data')
+.data <- .dot('data', create=FALSE)
 .data('input.txt')
 .data(c('a.txt','b.txt'))
 
-.dot2(c('rawdata','results'))
+.dot2(c('rawdata','results'), create=FALSE)
 .rawdata('rawfile.csv')
 .results('myresults.txt')
-}
 }

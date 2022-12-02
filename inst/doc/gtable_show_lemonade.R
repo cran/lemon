@@ -2,7 +2,7 @@
 library(knitr)
 
 knitr::opts_chunk$set(fig.height=4, fig.width=6,
-                      cache=TRUE, autodep = TRUE, cache.path = 'show_lemonade/')
+                      cache=TRUE, autodep = TRUE, cache.path = 'gtable_show_lemonade/')
 
 ## -----------------------------------------------------------------------------
 library(ggplot2)
@@ -24,14 +24,17 @@ my.theme <- theme_light()
 
 ## -----------------------------------------------------------------------------
 g <- ggplotGrob(p)
+nul <- unit(1, 'null')
 
 for (i in 1:nrow(g$layout)) {
   if (g$layout$name[i] == 'lemon') next
   h <- g$heights[[g$layout$t[i]]]
-  # if h == null
-  rot <- if (as.character(h) == "1null") 90 else 0
+  rot <- 0
+  rot <- ifelse(as.character(h) == '1null', 90, 0)
   w <- g$widths[[g$layout$l[i]]]
-  rot <- if (rot == 90 && as.character(w) == "1null") 0 else rot
+  if (rot == 90) {
+    rot <- ifelse(as.character(w) == '1null', 0, rot)
+  }
   r <- rectGrob(gp=gpar(col='black', fill='white', alpha=1/4))
   t <- textGrob(g$layout$name[i], rot = rot)
   g$grobs[[i]] <- grobTree(r, t)

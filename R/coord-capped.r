@@ -73,7 +73,7 @@ coord_capped_cart <- function(xlim = NULL,
   if (is.character(right)) right <- capped_vertical(right, gap=gap)
 
   test_orientation(top, right, bottom, left)
-  
+
   ggproto(NULL, CoordFlexCartesian,
           limits = list(x = xlim, y = ylim),
           expand = expand,
@@ -87,18 +87,7 @@ coord_capped_cart <- function(xlim = NULL,
 
 #' @rdname coord_capped
 #' @export
-# @inheritParams coord_flex_cart
-#' @param top,left,bottom,right Either a function returned from
-#'   \code{\link{capped_horizontal}} or \code{\link{brackets_horizontal}}.
-#'   If string, it is assumed to be shorthand for
-#'   \code{capped_horizontal(capped)} or similar for vertical.
-#' @param gap Both ends are \emph{always} capped by this proportion.
-#'   Usually a value between 0 and 1.
-#  @inheritParams coord_cartesian
-#' @param xlim,ylim Limits for the x and y axes.
-#' @param expand If \code{TRUE}, the default, adds a small expansion factor to
-#'   the limits to ensure that data and axes don't overlap. If \code{FALSE},
-#'   limits are taken exactly from the data or \code{xlim}/\code{ylim}.
+#  @inheritParams coord_flex_cart
 coord_capped_flip <- function(xlim = NULL,
                               ylim = NULL,
                               expand = TRUE,
@@ -111,9 +100,9 @@ coord_capped_flip <- function(xlim = NULL,
   if (is.character(bottom)) bottom <- capped_horizontal(bottom, gap=gap)
   if (is.character(left)) left <- capped_vertical(left, gap=gap)
   if (is.character(right)) right <- capped_vertical(right, gap=gap)
-  
+
   test_orientation(top, right, bottom, left)
-  
+
   ggproto(NULL, CoordFlexFlipped,
           limits = list(x = xlim, y = ylim),
           expand = expand,
@@ -128,40 +117,22 @@ coord_capped_flip <- function(xlim = NULL,
 
 #' @param capped Which end to cap the line. Can be one of (where relevant):
 #'   \code{both}, \code{none}, \code{left}, \code{right}, \code{top}, \code{bottom}.
+#  @inheritParams coord_capped_cart
 #' @rdname coord_capped
 #' @export
 #' @import grid
-# @inheritParams coord_capped_cart
-#' @param top,left,bottom,right Either a function returned from
-#'   \code{\link{capped_horizontal}} or \code{\link{brackets_horizontal}}.
-#'   If string, it is assumed to be shorthand for
-#'   \code{capped_horizontal(capped)} or similar for vertical.
-#' @param gap Both ends are \emph{always} capped by this proportion.
-#'   Usually a value between 0 and 1.
-#  @inheritParams coord_cartesian
-#' @param xlim,ylim Limits for the x and y axes.
-#' @param expand If \code{TRUE}, the default, adds a small expansion factor to
-#'   the limits to ensure that data and axes don't overlap. If \code{FALSE},
-#'   limits are taken exactly from the data or \code{xlim}/\code{ylim}.
 capped_horizontal <- function(capped = c('both','left','right','none'),
                               gap = 0.01) {
   capped <- match.arg(capped)
-  # guides: list with names (x, y, x.sec, y.sec), each a list describing an axis as a "guide"
+  # scale_details: aka. panel_params
   # position: top or bottom / left or right
   # theme:
-  #fn <- function(scale_details, axis, scale, position, theme) {
   fn <- function(guides, position, theme) {
-    agrob <-  panel_guides_grob(guides, position, theme)
-
+    guide <- guide_for_position(guides, position)
+    agrob <- guide_gengrob(guide, theme)
     if (agrob$name == 'NULL') return(agrob)
-    
-    if (guides$x$position == position) {
-      breaks <- guides$x$key$x
-    } else {
-      breaks <- guides$x.sec$key$x
-    }
-    r <- range(breaks, na.rm=TRUE)
-    
+
+    r <- range(guide$key$x)
     i <- which(grepl('line', names(agrob$children)))
     agrob$children[[i]]$x <- switch(capped,
                                     none =  unit(c(min(0 + gap, r[1]), max(1 - gap, r[2])), 'native'),
@@ -175,44 +146,27 @@ capped_horizontal <- function(capped = c('both','left','right','none'),
   fn
 }
 
-# @inheritParams capped_horizontal
+#' @inheritParams capped_horizontal
 #' @keywords internal
 #' @export
 capped_horisontal <- capped_horizontal
 
-# @inheritParams capped_horizontal
-#' @param top,left,bottom,right Either a function returned from
-#'   \code{\link{capped_horizontal}} or \code{\link{brackets_horizontal}}.
-#'   If string, it is assumed to be shorthand for
-#'   \code{capped_horizontal(capped)} or similar for vertical.
-#' @param gap Both ends are \emph{always} capped by this proportion.
-#'   Usually a value between 0 and 1.
-#  @inheritParams coord_cartesian
-#' @param xlim,ylim Limits for the x and y axes.
-#' @param expand If \code{TRUE}, the default, adds a small expansion factor to
-#'   the limits to ensure that data and axes don't overlap. If \code{FALSE},
-#'   limits are taken exactly from the data or \code{xlim}/\code{ylim}.
+#  @inheritParams capped_horizontal
 #' @rdname coord_capped
 #' @export
 #' @import grid
 capped_vertical <- function(capped = c('top','bottom','both','none'),
                             gap = 0.01) {
   capped <- match.arg(capped)
-  # guides: list with names (x, y, x.sec, y.sec), each a list describing an axis as a "guide"
+  # scale_details: aka. panel_params
   # position: top or bottom / left or right
   # theme:
-  #fn <- function(scale_details, axis, scale, position, theme) {
   fn <- function(guides, position, theme) {
-    agrob <-  panel_guides_grob(guides, position, theme)
-
+    guide <- guide_for_position(guides, position) #guides[[which(sapply(guides, `[[`, 'position') == position)]]
+    agrob <- guide_gengrob(guide, theme)
     if (agrob$name == 'NULL') return(agrob)
-    
-    if (guides$y$position == position) {
-      breaks <- guides$y$key$y
-    } else {
-      breaks <- guides$y.sec$key$y
-    }
-    r <- range(breaks, na.rm=TRUE)
+
+    r <- range(guide$key$y)
     i <- which(grepl('line', names(agrob$children)))
     agrob$children[[i]]$y <- switch(capped,
       none =    unit(c(min(0 + gap,r[1]), max(1 - gap, r[2])), 'native'),

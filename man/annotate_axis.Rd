@@ -3,7 +3,7 @@
 \name{annotate_y_axis}
 \alias{annotate_y_axis}
 \alias{annotate_x_axis}
-\title{Annotations in the axis}
+\title{Annotations on the axis}
 \usage{
 annotate_y_axis(
   label,
@@ -36,20 +36,20 @@ annotate_x_axis(
 
 \item{print_label, print_value, print_both}{Logical; what to show on annotation. Label and/or value.
 \code{print_both} is shortcut for setting both \code{print_label} and
-\code{print_value}. When both is TRUE, uses argument \code{sep} to 
+\code{print_value}. When both is TRUE, uses argument \code{sep} to
 separate the label and value.}
 
-\item{parsed}{Logical (default \code{FALSE}), 
-when \code{TRUE}, uses mathplot for outputting expressions. 
+\item{parsed}{Logical (default \code{FALSE}),
+when \code{TRUE}, uses mathplot for outputting expressions.
 See section "Showing values".}
 
-\item{...}{Style settings for label and tick: 
-colour, hjust, vjust, size, fontface, family, rot. 
+\item{...}{Style settings for label and tick:
+colour, hjust, vjust, size, fontface, family, rot.
 When \code{waiver()} (default),
 the relevant theme element is used.}
 }
 \description{
-Annotations in the axis
+Annotations on the axis
 }
 \section{}{
  Showing values:
@@ -69,7 +69,7 @@ l
 
 (l + annotate_x_axis('| good economy ->', x=25, print_value=FALSE, hjust=0, tick=TRUE))
 
-l + annotate_y_axis("x^2 == .(y)", y=180, parsed=FALSE,  tick=FALSE) +
+l + annotate_y_axis("x^2 == .(y)", y=150, parsed=FALSE,  tick=FALSE) +
     annotate_y_axis("x^2 + bar(x) == .(y)", y=mean(mtcars$hp), parsed=TRUE, tick=TRUE)
 
 l + annotate_y_axis("bar(x) == .(y)", y = mean(mtcars$hp),  parsed=TRUE, tick=FALSE) 
@@ -78,9 +78,8 @@ l + annotate_y_axis("bar(x) == .(y)", y = mean(mtcars$hp),  parsed=TRUE, tick=FA
 l + annotate_y_axis('this is midway', y=sum(range(mtcars$hp))/2, print_value = FALSE, side='left')
 
 # work around if an axis only contains parsed expressions
-p + annotate_y_axis("some long string", y=100, tick=FALSE, print_value=FALSE, colour=NA) +
-  annotate_y_axis("bar(x) == .(y)", y = mean(mtcars$hp),  parsed=TRUE, tick=FALSE)
-  
+p + annotate_y_axis("bar(x) == .(y)", y = mean(mtcars$hp),  parsed=TRUE, tick=FALSE) +
+  annotate_y_axis("some long string", y=100, tick=FALSE, print_value=FALSE, colour=NA)
 
 
 # Works together with other functions
