@@ -129,16 +129,17 @@ capped_horizontal <- function(capped = c('both','left','right','none'),
   # theme:
   fn <- function(guides, position, theme) {
     guide <- guide_for_position(guides, position)
-    agrob <- guide_gengrob(guide, theme)
+    agrob <- panel_guides_grob(guides, position, theme)
+
     if (agrob$name == 'NULL') return(agrob)
 
     r <- range(guide$key$x)
     i <- which(grepl('line', names(agrob$children)))
     agrob$children[[i]]$x <- switch(capped,
-                                    none =  unit(c(min(0 + gap, r[1]), max(1 - gap, r[2])), 'native'),
-                                    left =  unit(c(r[1], max(1 - gap, r[2])), 'native'),
-                                    right = unit(c(min(0 + gap, r[1]), r[2]), 'native'),
-                                    both =  unit(r, 'native')
+      none =  unit(c(min(0 + gap, r[1]), max(1 - gap, r[2])), 'native'),
+      left =  unit(c(r[1], max(1 - gap, r[2])), 'native'),
+      right = unit(c(min(0 + gap, r[1]), r[2]), 'native'),
+      both =  unit(r, 'native')
     )
     agrob
   }
@@ -162,8 +163,9 @@ capped_vertical <- function(capped = c('top','bottom','both','none'),
   # position: top or bottom / left or right
   # theme:
   fn <- function(guides, position, theme) {
-    guide <- guide_for_position(guides, position) #guides[[which(sapply(guides, `[[`, 'position') == position)]]
-    agrob <- guide_gengrob(guide, theme)
+    guide <- guide_for_position(guides, position)
+    agrob <- panel_guides_grob(guides, position, theme)
+
     if (agrob$name == 'NULL') return(agrob)
 
     r <- range(guide$key$y)

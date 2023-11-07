@@ -3,8 +3,7 @@ Type: Package
 Title: Freshing Up your 'ggplot2' Plots
 URL: https://github.com/stefanedwards/lemon
 BugReports: https://github.com/stefanedwards/lemon/issues
-Version: 0.4.6
-Date: 2022-11-29
+Version: 0.4.7
 Authors@R: c(
     person('Stefan McKinnon', 'Edwards', email='sme@iysik.com',
     comment=c(ORCID='0000-0002-4628-8148'),
@@ -21,11 +20,11 @@ Authors@R: c(
 Description: Functions for working with legends and axis lines of 'ggplot2',
     facets that repeat axis lines on all panels, and some 'knitr' extensions.
 Depends: R (>= 3.1.0)
-Imports: ggplot2 (>= 3.4.0), plyr, grid, gridExtra, gtable, knitr (>=
+Imports: ggplot2 (>= 3.4.2), plyr, grid, gridExtra, gtable, knitr (>=
         1.12), lattice, scales
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3
 Collate: 'ggplot2.r' 'lemon-plot.r' 'axis-annotation.r' 'brackets.R'
         'coord-flex.r' 'coord-capped.r' 'dot.r' 'facet-rep-lab.r'
         'facet-wrap.r' 'geom-pointline.r' 'lemon_print.r'
@@ -34,7 +33,7 @@ Collate: 'ggplot2.r' 'lemon-plot.r' 'axis-annotation.r' 'brackets.R'
 Suggests: rmarkdown, stringr, dplyr, testthat, vdiffr, diffviewer
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2022-12-02 09:06:20 UTC; stefan
+Packaged: 2023-11-07 10:11:21 UTC; smhe
 Author: Stefan McKinnon Edwards [aut, ctb, cre]
     (<https://orcid.org/0000-0002-4628-8148>),
   Baptiste Auguie [ctb] (For g_legend and grid_arrange_shared_legend),
@@ -43,4 +42,4 @@ Author: Stefan McKinnon Edwards [aut, ctb, cre]
   Winston Chang [ctb] (ggplot2 functions)
 Maintainer: Stefan McKinnon Edwards <sme@iysik.com>
 Repository: CRAN
-Date/Publication: 2022-12-02 10:50:02 UTC
+Date/Publication: 2023-11-07 12:00:02 UTC

@@ -1,7 +1,6 @@
 # Files given here are from ggplot2 base.
 #' @import ggplot2
 #' @import grid
-#  @import gridExtra
 #' @import gtable
 NULL
 
@@ -38,7 +37,7 @@ is.waive <- function(x) inherits(x, "waiver")
 #' @keywords internal
 #' @rdname ggplot2-non-exports
 #' @name if-not-null
-#' @export
+#' @rawNamespace if(getRversion() < "4.4")  export("%||%")
 "%||%" <- function(a, b) {
   if (!is.null(a)) a else b
 }
@@ -71,16 +70,30 @@ is.zero <- function (x)  {
 
 # From ggplot2/R/coord-cartesian-.r
 panel_guide_label <- function(guides, position, default_label) {
-  guide <- guide_for_position(guides, position) %||% guide_none(title = waiver())
-  guide$title %|W|% default_label
+  if (inherits(guides, "Guides")) {
+    pair <- guides$get_position(position)
+    pair$params$title %|W|% default_label
+  } else {
+    guide <- guide_for_position(guides, position) %||% guide_none(title = waiver())
+    guide$title %|W|% default_label
+  }
 }
 
 panel_guides_grob <- function(guides, position, theme) {
-  guide <- guide_for_position(guides, position) %||% guide_none()
-  guide_gengrob(guide, theme)
+  if (inherits(guides, "Guides")) {
+    pair <- guides$get_position(position)
+    pair$guide$draw(theme, pair$params)
+  } else {
+    guide <- guide_for_position(guides, position) %||% guide_none()
+    guide_gengrob(guide, theme)
+  }
 }
 
 guide_for_position <- function(guides, position) {
+  if (inherits(guides, "Guides")) {
+    pair <- guides$get_position(position)
+    return(pair$params)
+  }
   has_position <- vapply(
     guides,
     function(guide) identical(guide$position, position),
