@@ -69,11 +69,11 @@ remove_labels_from_axis <- function(axisgrob, direction = c('horizontal','vertic
   d <- which(grepl('titleGrob', sapply(axisgrob$children[[a]]$grobs, `[[`, i='name')))
 
   if (length(d) == 1) {
-    axis <- axisgrob$children[[a]] ## a gtable
+    old_axisgrob <- axisgrob
+    axis <- axisgrob$children[[a]]
     axis$grobs[[d]] <- zeroGrob()
     if (direction == 'horizontal') {
-      t <- axis$layout$t[d]
-      axis$heights[[t]] <- unit(0,'npc')
+      axis$heights[[d]] <- unit(0,'npc')
       axisgrob$height <- sum(axis$heights)
     } else if (direction == 'vertical') {
       axis$widths[[d]] <- unit(0,'npc')

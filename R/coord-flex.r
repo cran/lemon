@@ -25,7 +25,7 @@ NULL
 #'
 #' The provided function is with the arguments
 #' \code{scale_details}, \code{axis}, \code{scale}, \code{position}, and \code{theme},
-#' and the function should return an \code{\link{absoluteGrob}} object.
+#' and the function should return an \code{\link[ggplot2]{absoluteGrob}} object.
 #'
 #' For examples of modifying the drawn object, see e.g.
 #' \code{\link{capped_horizontal}} or \code{\link{brackets_horizontal}}.
@@ -158,16 +158,36 @@ flex_render_axis_h <- function(self, panel_params, theme) {
   top <- self$top %|W|% panel_guides_grob
   bottom <- self$bottom %|W|% panel_guides_grob
   list(
-    top = top(panel_params$guides, position = "top", theme = theme),
-    bottom = bottom(panel_params$guides, position = "bottom", theme = theme)
+    top = top(
+      panel_params$guides, 
+      position = "top", 
+      theme = theme,
+      labels = panel_params$draw_labels$top
+    ),
+    bottom = bottom(
+      panel_params$guides, 
+      position = "bottom", 
+      theme = theme,
+      labels = panel_params$draw_labels$top
+    )
   )
 }
 flex_render_axis_v <- function(self, panel_params, theme) {
   left <- self$left %|W|% panel_guides_grob
   right <- self$right %|W|% panel_guides_grob
   list(
-    left = left(panel_params$guides, position = "left", theme = theme),
-    right = right(panel_params$guides, position = "right", theme = theme)
+    left = left(
+      panel_params$guides, 
+      position = "left", 
+      theme = theme,
+      labels = panel_params$draw_labels$top
+    ),
+    right = right(
+      panel_params$guides, 
+      position = "right", 
+      theme = theme,
+      labels = panel_params$draw_labels$top
+    )
   )
 }
 

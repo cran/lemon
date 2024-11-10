@@ -25,7 +25,7 @@ NULL
 #'   up, down, left, or right?
 #' @param length Length of the unit, parallel with axis line.
 #' @param tick.length Height (width) of x-axis (y-axis) bracket.
-#'   If \code{waiver()} (default), use \code{axis.ticks.length} from \code{\link{theme}}.
+#'   If \code{waiver()} (default), use \code{axis.ticks.length} from \code{\link[ggplot2]{theme}}.
 #' @seealso \code{\link[grid]{unit}}
 #' @aliases brackets_horisontal
 #' @examples
@@ -59,7 +59,7 @@ brackets_horizontal <- function(direction = c('up','down'),
   direction=match.arg(direction)
 
   # Returns a function
-  fn <- function(guides, position, theme) {
+  fn <- function(guides, position, theme, labels = NULL) {
     agrob <- panel_guides_grob(guides, position, theme)
     if (agrob$name == 'NULL') return(agrob)
 
@@ -143,7 +143,7 @@ brackets_vertical <- function(direction = c('left','right'),
     tick.length <- unit(as.numeric(tick.length), 'npc')
 
   direction=match.arg(direction)
-  fn <- function(guides, position, theme) {
+  fn <- function(guides, position, theme, labels = NULL) {
     agrob <- panel_guides_grob(guides, position, theme)
     if (agrob$name == 'NULL') return(agrob)
 

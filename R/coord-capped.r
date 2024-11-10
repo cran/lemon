@@ -7,7 +7,7 @@ NULL
 #' Cartesian coordinates with capped axis lines.
 #'
 #' Caps the axis lines to the outer ticks to e.g. indicate range of values.
-#' Methods correspond to \code{\link{coord_cartesian}} and \code{\link{coord_flip}}
+#' Methods correspond to \code{\link[ggplot2]{coord_cartesian}} and \code{\link[ggplot2]{coord_flip}}
 #'
 #' This function is a simple override of \code{\link{coord_flex_cart}}
 #' and \code{\link{coord_flex_flip}},
@@ -127,9 +127,9 @@ capped_horizontal <- function(capped = c('both','left','right','none'),
   # scale_details: aka. panel_params
   # position: top or bottom / left or right
   # theme:
-  fn <- function(guides, position, theme) {
+  fn <- function(guides, position, theme, labels = NULL) {
     guide <- guide_for_position(guides, position)
-    agrob <- panel_guides_grob(guides, position, theme)
+    agrob <- panel_guides_grob(guides, position, theme, labels = labels)
 
     if (agrob$name == 'NULL') return(agrob)
 
@@ -162,9 +162,9 @@ capped_vertical <- function(capped = c('top','bottom','both','none'),
   # scale_details: aka. panel_params
   # position: top or bottom / left or right
   # theme:
-  fn <- function(guides, position, theme) {
+  fn <- function(guides, position, theme, labels = NULL) {
     guide <- guide_for_position(guides, position)
-    agrob <- panel_guides_grob(guides, position, theme)
+    agrob <- panel_guides_grob(guides, position, theme, labels = labels)
 
     if (agrob$name == 'NULL') return(agrob)
 
