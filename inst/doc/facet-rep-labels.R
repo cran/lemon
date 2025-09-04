@@ -32,9 +32,9 @@ p + facet_wrap(~ interaction(cyl, drv), scales='free') +
 p + facet_wrap2(~ interaction(cyl, drv), scales = 'free_y', axes = TRUE, remove_labels = "x")
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  p + facet_wrap2(~ interaction(cyl, drv), scales = 'free_y', axes = TRUE, remove_labels = FALSE)
-#  p + facet_wrap2(~ interaction(cyl, drv), scales = 'free_y', axes = TRUE, remove_labels = "y")
-#  p + facet_wrap2(~ interaction(cyl, drv), scales = 'free_y', axes = TRUE, remove_labels = "x")
-#  p + scale_x_continuous(sec.axis = dup_axis()) +
-#    facet_wrap2(~ interaction(cyl, drv), scales = 'free_y', axes = TRUE, remove_labels = FALSE)
+# p + facet_wrap2(~ interaction(cyl, drv), scales = 'free_y', axes = TRUE, remove_labels = FALSE)
+# p + facet_wrap2(~ interaction(cyl, drv), scales = 'free_y', axes = TRUE, remove_labels = "y")
+# p + facet_wrap2(~ interaction(cyl, drv), scales = 'free_y', axes = TRUE, remove_labels = "x")
+# p + scale_x_continuous(sec.axis = dup_axis()) +
+#   facet_wrap2(~ interaction(cyl, drv), scales = 'free_y', axes = TRUE, remove_labels = FALSE)
 

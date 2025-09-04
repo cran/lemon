@@ -165,6 +165,7 @@ print(p)
 grid.draw(gtable_show_names(p, plot=FALSE))
 
 ## ----error=TRUE---------------------------------------------------------------
+try({
 gp <- ggplotGrob(p)
 gp <- gtable_add_rows(gp, g$heights[1], 0)
 gp <- gtable_add_cols(gp, unit(1.5, 'line'))
@@ -174,4 +175,5 @@ g <- gtable_show_names(gtable_show_grill(p, plot=FALSE), plot=FALSE)
 g <- cbind(gp, g)
 grid.newpage()
 grid.draw(g)
+})
 

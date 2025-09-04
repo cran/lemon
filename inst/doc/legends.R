@@ -87,7 +87,8 @@ d2 <- d + facet_grid(.~cut, )
 gtable_show_names(d2)
 
 ## ----reposition_legend_facet1,fig.cap='Placing the legend in a facet panel.'----
-reposition_legend(d2, 'top left', panel = 'panel-1-5')
+try(reposition_legend(d2, 'top left', panel = 'panel-5-1'))
+try(reposition_legend(d2, 'top left', panel = 'panel-1-5'))
 
 ## ----reposition_legend_facet2,fig.cap='Placing the legend in an empty panel when using `facet_wrap`.'----
 reposition_legend(d + facet_wrap(~cut, ncol=3), 'top left', panel='panel-3-2')
